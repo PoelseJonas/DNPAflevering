@@ -3,10 +3,26 @@ using Entities;
 
 namespace InMemoryRepositories;
 
-public class PostInMemoryRepository: IPostRepository
+public class PostInMemoryRepository : IPostRepository
 {
     private List<Post> posts = new();
-    
+
+    public PostInMemoryRepository()
+    {
+        new Post
+        {
+            PostId = 1, Title = "Hello World", Body = "First post!", UserId = 1
+        };
+        new Post
+        {
+            PostId = 2, Title = "Second Post", Body = "Another post", UserId = 2
+        };
+        new Post
+        {
+            PostId = 3, Title = "Third Post", Body = "Another another post", UserId = 3
+        };
+    }
+
     public Task<Post> AddAsync(Post post)
     {
         post.PostId = posts.Any()
@@ -18,7 +34,8 @@ public class PostInMemoryRepository: IPostRepository
 
     public Task UpdateAsync(Post post)
     {
-        Post? existingPost = posts.SingleOrDefault(p => p.PostId == post.PostId);
+        Post? existingPost =
+            posts.SingleOrDefault(p => p.PostId == post.PostId);
         if (existingPost is null)
         {
             throw new InvalidOperationException(
@@ -52,6 +69,7 @@ public class PostInMemoryRepository: IPostRepository
             throw new InvalidOperationException(
                 $"Post with ID '{id}' not found");
         }
+
         return Task.FromResult(postToGet);
     }
 

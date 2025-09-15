@@ -7,11 +7,17 @@ public class CommentInMemoryRepository : ICommentRepository
 {
     private List<Comment> comments = new();
 
+    public CommentInMemoryRepository()
+    {
+        new Comment{ Id = 1, Body= "Stupid ass post", UserId = 2};
+        new Comment{ Id = 2, Body= "This post is fucking genius", UserId = 1};
+        new Comment{ Id = 3, Body= "im dumbo", UserId = 3};
+    }
 
     public Task<Comment> AddAsync(Comment comment)
     {
-        comment.CommentId = comments.Any()
-            ? comments.Max(c => c.CommentId) + 1
+        comment.Id = comments.Any()
+            ? comments.Max(c => c.Id) + 1
             : 1;
         comments.Add(comment);
         return Task.FromResult(comment);
@@ -20,11 +26,11 @@ public class CommentInMemoryRepository : ICommentRepository
     public Task UpdateAsync(Comment comment)
     {
         var existing =
-            comments.SingleOrDefault(c => c.CommentId == comment.CommentId);
+            comments.SingleOrDefault(c => c.Id == comment.Id);
         if (existing is null)
         {
             throw new InvalidOperationException(
-                $"Comment with ID '{comment.CommentId}' not found");
+                $"Comment with ID '{comment.Id}' not found");
         }
 
         comments.Remove(existing);
@@ -34,7 +40,7 @@ public class CommentInMemoryRepository : ICommentRepository
 
     public Task DeleteAsync(int id)
     {
-        var toRemove = comments.SingleOrDefault(c => c.CommentId == id);
+        var toRemove = comments.SingleOrDefault(c => c.Id == id);
         if (toRemove is null)
             throw new InvalidOperationException(
                 $"Comment with ID '{id}' not found");
@@ -44,7 +50,7 @@ public class CommentInMemoryRepository : ICommentRepository
 
     public Task<Comment> GetSingleAsync(int id)
     {
-        var comment = comments.SingleOrDefault(c => c.CommentId == id);
+        var comment = comments.SingleOrDefault(c => c.Id == id);
         if (comment is null)
             throw new InvalidOperationException(
                 $"Comment with ID '{id}' not found");

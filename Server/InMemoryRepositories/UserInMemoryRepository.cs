@@ -7,10 +7,17 @@ public class UserInMemoryRepository : IUserRepository
 {
     private List<User> users = new();
 
+    public UserInMemoryRepository()
+    {
+        new User { Id = 1, Username = "abe", Password = "abeabe" };
+        new User { Id = 2, Username = "abe1", Password = "abeabeabe" };
+        new User { Id = 3, Username = "abeabe", Password = "abeabe1" };
+    }
+
     public Task<User> AddAsync(User user)
     {
-        user.UserId = users.Any()
-            ? users.Max(u => u.UserId) + 1
+        user.Id = users.Any()
+            ? users.Max(u => u.Id) + 1
             : 1;
         users.Add(user);
         return Task.FromResult(user);
@@ -18,10 +25,10 @@ public class UserInMemoryRepository : IUserRepository
 
     public Task UpdateAsync(User user)
     {
-        var existing = users.SingleOrDefault(u => u.UserId == user.UserId);
+        var existing = users.SingleOrDefault(u => u.Id == user.Id);
         if (existing is null)
             throw new InvalidOperationException(
-                $"User with ID '{user.UserId}' not found");
+                $"User with ID '{user.Id}' not found");
         users.Remove(existing);
         users.Add(user);
         return Task.CompletedTask;
@@ -29,7 +36,7 @@ public class UserInMemoryRepository : IUserRepository
 
     public Task DeleteAsync(int id)
     {
-        var toRemove = users.SingleOrDefault(u => u.UserId == id);
+        var toRemove = users.SingleOrDefault(u => u.Id == id);
         if (toRemove is null)
             throw new InvalidOperationException(
                 $"User with ID '{id}' not found");
@@ -39,7 +46,7 @@ public class UserInMemoryRepository : IUserRepository
 
     public Task<User> GetSingleAsync(int id)
     {
-        var user = users.SingleOrDefault(u => u.UserId == id);
+        var user = users.SingleOrDefault(u => u.Id == id);
         if (user is null)
             throw new InvalidOperationException(
                 $"User with ID '{id}' not found");
