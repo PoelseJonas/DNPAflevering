@@ -6,5 +6,10 @@ public class User
     public string Password { get; set; }
     public int Id { get; set; }
 
-    
+    public User(string username, string password)
+    {
+        this.Username = username;
+        this.Password = password;
+        
+    }
 }

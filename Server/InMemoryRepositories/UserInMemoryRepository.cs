@@ -9,9 +9,7 @@ public class UserInMemoryRepository : IUserRepository
 
     public UserInMemoryRepository()
     {
-        new User { Id = 1, Username = "abe", Password = "abeabe" };
-        new User { Id = 2, Username = "abe1", Password = "abeabeabe" };
-        new User { Id = 3, Username = "abeabe", Password = "abeabe1" };
+        new User("abe", "abeabe");
     }
 
     public Task<User> AddAsync(User user)

@@ -9,9 +9,7 @@ public class CommentInMemoryRepository : ICommentRepository
 
     public CommentInMemoryRepository()
     {
-        new Comment{ Id = 1, Body= "Stupid ass post", UserId = 2};
-        new Comment{ Id = 2, Body= "This post is fucking genius", UserId = 1};
-        new Comment{ Id = 3, Body= "im dumbo", UserId = 3};
+        new Comment("stupid ass post", 1,1 );
     }
 
     public Task<Comment> AddAsync(Comment comment)

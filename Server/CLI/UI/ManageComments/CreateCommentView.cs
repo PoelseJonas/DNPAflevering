@@ -14,10 +14,6 @@ public class CreateCommentView
 
     public async Task AddComment(Comment comment)
     {
-        if (comment == null)
-        {
-            throw new ArgumentNullException("comment cannot be null");
-        }
-        
+        await commentRepository.AddAsync(comment);
     }
 }
