@@ -20,7 +20,7 @@ public class PostFileRepository : IPostRepository
         throw new NotImplementedException();
     }
 
-    public Task UpdateAsync(Post post)
+    public Task<Post> UpdateAsync(Post post)
     {
         throw new NotImplementedException();
     }

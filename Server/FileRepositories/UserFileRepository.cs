@@ -21,17 +21,17 @@ public class UserFileRepository: IUserRepository
         throw new NotImplementedException();
     }
 
-    public Task UpdateAsync(User user)
+    public Task<User> UpdateAsync(User user)
     {
         throw new NotImplementedException();
     }
 
-    public Task DeleteAsync(int id)
+    public Task DeleteAsync(string username)
     {
         throw new NotImplementedException();
     }
 
-    public Task<User> GetSingleAsync(int id)
+    public Task<User> GetSingleAsync(string username)
     {
         throw new NotImplementedException();
     }

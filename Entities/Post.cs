@@ -7,9 +7,9 @@ public class Post
     public string Body { get; set; }
     public int UserId { get; set; }
 
-    public Post(int id, string title, string body, int userId)
+    public Post(string title, string body, int userId)
     {
-        this.Id = id;
+        //this.Id = id;
         this.Title = title;
         this.Body = body;
         this.UserId = userId;

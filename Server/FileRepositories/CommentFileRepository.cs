@@ -28,7 +28,7 @@ public class CommentFileRepository: ICommentRepository
         return comment;
     }
 
-    public Task UpdateAsync(Comment comment)
+    public Task<Comment> UpdateAsync(Comment comment)
     {
         throw new NotImplementedException();
     }
