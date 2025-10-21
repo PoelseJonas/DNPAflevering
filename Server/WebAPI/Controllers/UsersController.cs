@@ -16,22 +16,23 @@ public class UsersController: ControllerBase
         this.userRepository = userRepository;
     }
 
-    /*private string Task VerifyUserNameIsAvailableAsync()
+    private void VerifyUserNameIsAvailable(string username)
     {
-        var existingUser = await userRepository.GetByUserNameAsync(userName);
+
+        var existingUser = userRepository.GetMany().FirstOrDefault(u=> u.Username == username);
         if (existingUser != null)
         {
             throw new Exception("Username is already taken.");
         }
     }
-    */
+    
     
     [HttpPost]
     public async Task<ActionResult<UserDto>> AddUser([FromBody] CreateUserDto request)
     {
         try
         {
-            //await VerifyUserNameIsAvailableAsync(request.UserName);
+            VerifyUserNameIsAvailable(request.UserName);
 
             User user = new(request.UserName, request.Password);
             User created = await userRepository.AddAsync(user);

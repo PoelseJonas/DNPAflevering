@@ -22,7 +22,6 @@ public class PostsController:ControllerBase
     {
         try
         {
-//help pls jeg har ikke helt styr på det der med ID's osv.
             Post post = new(request.Title, request.Body, request.UserId);
             Post created = await postRepository.AddAsync(post);
             

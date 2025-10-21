@@ -9,9 +9,9 @@ public class PostInMemoryRepository : IPostRepository
 
     public PostInMemoryRepository()
     {
-       new Post(1, "Hello World", "first post!", 1);
-        new Post(2, "Second post", "Another post", 2);
-        new Post(3, "Third post", "Another another post!", 3);
+       //new Post(1, "Hello World", "first post!", 1);
+       //new Post(2, "Second post", "Another post", 2);
+       //new Post(3, "Third post", "Another another post!", 3);
         
     }
 
@@ -25,7 +25,7 @@ public class PostInMemoryRepository : IPostRepository
         return Task.FromResult(post);
     }
 
-    public Task<Post> UpdateAsync(Post post)
+    public async Task<Post> UpdateAsync(Post post)
     {
         Post? existingPost =
             posts.SingleOrDefault(p => p.Id == post.Id);
@@ -39,7 +39,7 @@ public class PostInMemoryRepository : IPostRepository
         posts.Add(post);
 
         //igen må man bare dette?
-        return (Task<Post>)Task.CompletedTask;
+        return post;
     }
 
     public Task DeleteAsync(int id)

@@ -17,12 +17,11 @@ public class CommentsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CommentDto>> AddComment(
+    public async Task<ActionResult<CommentDto>> AddCommentAsync(
         [FromBody] CreateCommentDto request)
     {
         try
         {
-//help pls jeg har ikke helt styr på det der med ID's osv.
             Comment comment = new(request.Body, request.UserId, request.PostId);
             Comment created = await commentRepository.AddAsync(comment);
             
