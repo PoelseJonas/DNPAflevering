@@ -1,0 +1,33 @@
+﻿@page "/AddUser"
+@using ApiContracts_DTO
+@using BlazorApp.Components.Services
+@inject IUserService UserService
+<h3>AddUser</h3>
+
+<div>
+    <label>Username:</label>
+    <input type="text" @bind="Username"/>
+</div>
+
+<div>
+    <label>Password:</label>
+    <input type="password" @bind="Password"/>
+</div>
+
+<button @onclick="AddAUser">Add User</button>
+
+@code {
+    private string Username { get; set; }
+    private string Password { get; set; }
+
+    private void AddAUser()
+    {
+        CreateUserDto createUserDto = new CreateUserDto
+        {
+            UserName = Username,
+            Password = Password
+        };
+        UserService.AddUserAsync(createUserDto);
+    }
+
+}
