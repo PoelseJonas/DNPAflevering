@@ -41,6 +41,7 @@ public class UsersController: ControllerBase
                 Id = created.Id,
                 UserName = created.Username
             };
+            Console.WriteLine(user);
             return Created($"/Users/{dto.Id}", dto);
         }
         catch (Exception e)

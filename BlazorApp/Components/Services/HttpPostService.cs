@@ -3,37 +3,37 @@ using ApiContracts_DTO;
 
 namespace BlazorApp.Components.Services;
 
-public class HttpUserService : IUserService
+public class HttpPostService: IPostService
 {
     private readonly HttpClient client;
 
-    public HttpUserService(HttpClient client)
+    public HttpPostService(HttpClient client)
     {
         this.client = client;
     }
-
-    public async Task<UserDto> AddUserAsync(CreateUserDto request)
+    
+    public async Task<PostDto> AddPostAsync(CreatePostDto request)
     {
         Console.WriteLine(request);
         HttpResponseMessage httpResponse =
-            await client.PostAsJsonAsync("users", request);
+            await client.PostAsJsonAsync("posts", request);
         string response = await httpResponse.Content.ReadAsStringAsync();
         if (!httpResponse.IsSuccessStatusCode)
         {
             throw new Exception(response);
         }
 
-        return JsonSerializer.Deserialize<UserDto>(response,
+        return JsonSerializer.Deserialize<PostDto>(response,
             new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             })!;
     }
 
-    public async Task UpdateUserAsync(int id, UpdateUserDto request)
+    public async Task UpdatePostAsync(int id, UpdatePostDto request)
     {
         HttpResponseMessage httpResponse =
-            await client.PutAsJsonAsync($"users/{id}", request);
+            await client.PutAsJsonAsync($"posts/{id}", request);
         string response = await httpResponse.Content.ReadAsStringAsync();
 
         if (!httpResponse.IsSuccessStatusCode)
@@ -41,22 +41,22 @@ public class HttpUserService : IUserService
             throw new Exception(response);
         }
 
-        var updatedUser = await httpResponse.Content.ReadFromJsonAsync<UserDto>(
+        var updatedPost = await httpResponse.Content.ReadFromJsonAsync<UserDto>(
             new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             })!;
 
-        if (updatedUser is null)
+        if (updatedPost is null)
         {
-            throw new Exception("Empty response body for updateUser");
+            throw new Exception("Empty response body for updatePost");
         }
     }
 
-    public async Task DeleteUserAsync(int id)
+    public async Task DeletePostAsync(int id)
     {
         HttpResponseMessage httpResponse =
-            await client.DeleteAsync($"users/{id}");
+            await client.DeleteAsync($"posts/{id}");
         string response = await httpResponse.Content.ReadAsStringAsync();
 
         if (!httpResponse.IsSuccessStatusCode)
@@ -65,10 +65,10 @@ public class HttpUserService : IUserService
         }
     }
 
-    public async Task<UserDto> GetSingleAsync(int id)
+    public async Task<PostDto> GetSingleAsync(int id)
     {
         HttpResponseMessage httpResponse =
-            await client.GetAsync($"users/{id}");
+            await client.GetAsync($"posts/{id}");
         string response = await httpResponse.Content.ReadAsStringAsync();
 
         if (!httpResponse.IsSuccessStatusCode)
@@ -76,7 +76,7 @@ public class HttpUserService : IUserService
             throw new Exception(response);
         }
 
-        var user = await httpResponse.Content.ReadFromJsonAsync<UserDto>(
+        var user = await httpResponse.Content.ReadFromJsonAsync<PostDto>(
             new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -91,25 +91,8 @@ public class HttpUserService : IUserService
         return user;
     }
 
-    public async Task<IQueryable<UserDto>> GetMany()
+    public Task<IEnumerable<PostDto>> GetMany()
     {
-       /* HttpResponseMessage httpResponse = await client.GetFromJsonAsync<List<UserDto>>("users",  new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-        
-        string response = await httpResponse.Content.ReadAsStringAsync();
-
-        if (!httpResponse.IsSuccessStatusCode)
-        {
-            throw new Exception(response);
-        }
-
-        return */
-
-       return null;
+        throw new NotImplementedException();
     }
-
-
-    // more methods...
 }

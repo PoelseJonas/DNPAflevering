@@ -1,0 +1,53 @@
+﻿@page "/AddComment"
+@using ApiContracts_DTO
+@using BlazorApp.Components.Services
+@inject ICommentService CommentService
+@inject NavigationManager Navigation
+<h3>AddComment</h3>
+<div>
+    <label>UserId:</label>
+    <input type="number" @bind="UserId"/>
+</div>
+
+
+<div>
+    <label>PostId:</label>
+    <input type="number" @bind="PostId"/>
+</div>
+
+<div>
+    <label>Body:</label>
+    <textarea type="text" @bind="Body"></textarea>
+</div>
+
+<button @onclick="AddAComment">Add Comment</button>
+
+
+@code {
+    private int PostId { get; set; }
+    private string Body { get; set; }
+    int UserId { get; set; }
+    private string errorMessage;
+
+    private async Task AddAComment()
+    {
+        CreateCommentDto createCommentDto = new CreateCommentDto
+        {
+            Body = Body,
+            UserId = UserId,
+            PostId = PostId,
+
+        };
+        try
+        {
+            await CommentService.AddCommentAsync(createCommentDto);
+            Navigation.NavigateTo($"/posts/{PostId}"); // juster placering?
+        }
+        catch (Exception e)
+        {
+            errorMessage = e.Message;
+        }
+        
+    }
+
+}

@@ -24,20 +24,21 @@ public class PostsController:ControllerBase
         {
             Post post = new(request.Title, request.Body, request.UserId);
             Post created = await postRepository.AddAsync(post);
-            
             var dto = new PostDto
             {
                 Id = created.Id,
                 Body = created.Body,
                 Title = created.Title
             };
-            return Created($"/Posts/{dto.Id}", dto);
+            Console.WriteLine("mvi er nu i webapi" + dto);
+            return Created($"/Posts/{dto.Id}", dto); ;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             return StatusCode(500, e.Message);
         }
+        
     }
 
     //Cacheable

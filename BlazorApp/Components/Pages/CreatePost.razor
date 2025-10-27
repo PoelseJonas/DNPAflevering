@@ -1,0 +1,43 @@
+﻿@page "/CreatePost"
+@using ApiContracts_DTO
+@using BlazorApp.Components.Services
+@inject IPostService PostService
+<h3>CreatePost</h3>
+
+<div>
+    <label>UserId:</label>
+    <input type="number" @bind="UserId"/>
+</div>
+
+
+<div>
+    <label>Title:</label>
+    <input type="text" @bind="Title"/>
+</div>
+
+<div>
+    <label>Body:</label>
+    <textarea type="text" @bind="Body"></textarea>
+</div>
+
+<button @onclick="AddAPost">Add Post</button>
+
+
+@code {
+    private string Title { get; set; }
+    private string Body { get; set; }
+    int UserId { get; set; }
+
+    private void AddAPost()
+    {
+        CreatePostDto createPostDto = new CreatePostDto
+        {
+            Title = Title,
+            Body = Body,
+            UserId = UserId
+            
+        };
+        PostService.AddPostAsync(createPostDto);
+    }
+    
+}

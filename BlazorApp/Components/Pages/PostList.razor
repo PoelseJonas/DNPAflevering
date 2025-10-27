@@ -1,0 +1,64 @@
+﻿@page "/PostList"
+@using System.Net
+@using ApiContracts_DTO
+@using BlazorApp.Components.Services
+@inject IPostService PostService
+@inject NavigationManager Navigation
+@inject HttpClient Http
+
+<h3>PostList</h3>
+
+@if (posts is null)
+{
+    <p>Loading...</p>
+}
+else if (!posts.Any())
+{
+    <p>No posts found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Body</th>
+            <th>Author</th>
+            <th>Comments</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var p in posts)
+        {
+            var author = users.FirstOrDefault(u => u.Id == p.Id);
+            <tr style="cursor:pointer" @onclick="@(() => GoToPost(p.Id))">
+                <td> @p.Title</td>
+                <td> @p.Body</td>
+                <td> @(author?.UserName ?? "Unkown")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<PostDto>? posts;
+    private List<UserDto>? users;
+//Man laver en protected override async task, for at undgå at blokere UI tråden
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            posts = await Http.GetFromJsonAsync<List<PostDto>>("posts");
+            users = await Http.GetFromJsonAsync<List<UserDto>>("users");
+        }
+        catch (Exception ex)
+        {
+            posts = new List<PostDto>();
+            users = new List<UserDto>();
+            Console.Error.WriteLine(ex.Message);
+        }
+    }
+
+    private void GoToPost(int postId) => Navigation.NavigateTo($"Posts/{postId}");
+}

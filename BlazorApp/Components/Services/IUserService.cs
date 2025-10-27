@@ -8,6 +8,5 @@ public interface IUserService
     public Task UpdateUserAsync(int id, UpdateUserDto request);
     public Task DeleteUserAsync(int id);
     Task<UserDto> GetSingleAsync(int id);
-    
-    IQueryable<UserDto> GetMany();
+    Task<IQueryable<UserDto>> GetMany();
 }
