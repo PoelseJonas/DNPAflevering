@@ -31,6 +31,13 @@
 
     private async Task AddAComment()
     {
+        if (PostId <= 0)
+        {
+            errorMessage = "PostId not set.";
+            Console.WriteLine(errorMessage);
+            return;
+        }
+        
         CreateCommentDto createCommentDto = new CreateCommentDto
         {
             Body = Body,

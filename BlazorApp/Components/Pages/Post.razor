@@ -1,0 +1,75 @@
+﻿@page "/posts/{PostId:int}"
+@using ApiContracts_DTO
+@using BlazorApp.Components.Services
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IPostService PostService
+@inject ICommentService CommentService
+
+<h3 class="m-3">Post</h3>
+<div class="m-3">
+    <div class="mb-2">
+        <label class="form-label">Title</label>
+        <input class="form-control" value="@(post?.Title ?? string.Empty)"
+               readonly/>
+    </div>
+
+    <div class="mb-2">
+        <label class="form-label">Body</label>
+        <textarea class="form-control" rows="6"
+                  readonly>@(post?.Body ?? string.Empty)</textarea>
+    </div>
+
+    <a class="btn btn-link p-0" href="/posts">← Back to Posts</a>
+</div>
+
+<div class="m-3">
+    <h5>Comments (@(comments?.Count ?? 0))</h5>
+
+    @if (comments == null || !comments.Any())
+    {
+        <div class="text-muted">No comments.</div>
+    }
+    else
+    {
+        <ul class="list-group">
+            @foreach (var c in comments ?? Enumerable.Empty<CommentDto>())
+            {
+                <li class="list-group-item">
+                    <strong>@(c == null ? "Anonymous" : "BrugerID: " + c.UserId.ToString())</strong>
+                    <div class="mt-1">@(c?.Body ?? string.Empty)</div>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    [Parameter] public int PostId { get; set; }
+
+    private PostDto? post;
+    private List<CommentDto>? comments;
+
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+    
+        try
+        {
+            //Lokal filtrering, måske bedre at filtrere i commentservice og give int PostId parameter?
+            post = await PostService.GetSingleAsync(PostId);
+            var allComments = await CommentService.GetMany();
+            comments = allComments
+                .Where(c => c.PostId == PostId)
+                .ToList();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"FEJL: {e.Message}");
+            post = null;
+            comments = new List<CommentDto>();
+        }
+    }
+
+}

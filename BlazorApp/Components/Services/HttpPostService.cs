@@ -41,7 +41,7 @@ public class HttpPostService: IPostService
             throw new Exception(response);
         }
 
-        var updatedPost = await httpResponse.Content.ReadFromJsonAsync<UserDto>(
+        var updatedPost = await httpResponse.Content.ReadFromJsonAsync<PostDto>(
             new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
@@ -76,23 +76,45 @@ public class HttpPostService: IPostService
             throw new Exception(response);
         }
 
-        var user = await httpResponse.Content.ReadFromJsonAsync<PostDto>(
+        var post = await httpResponse.Content.ReadFromJsonAsync<PostDto>(
             new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
 
-        if (user is null)
+        if (post is null)
         {
             throw new Exception(
                 "API returned an empty response body for GetSingle.");
         }
 
-        return user;
+        return post;
     }
 
-    public Task<IEnumerable<PostDto>> GetMany()
+    public async Task<IQueryable<PostDto>> GetMany()
     {
-        throw new NotImplementedException();
+        HttpResponseMessage httpResponse =
+            await client.GetAsync($"posts");
+        string response = await httpResponse.Content.ReadAsStringAsync();
+
+        if (!httpResponse.IsSuccessStatusCode)
+        {
+            throw new Exception(response);
+        }
+
+        var posts = await httpResponse.Content.ReadFromJsonAsync<List<PostDto>>(
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+        if (posts is null)
+        {
+            throw new Exception(
+                "API returned an empty response body for GetSingle.");
+        }
+
+        return posts.AsQueryable();
+
     }
 }

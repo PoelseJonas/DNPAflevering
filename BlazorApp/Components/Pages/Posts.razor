@@ -1,12 +1,13 @@
-﻿@page "/PostList"
+﻿@page "/Posts"
 @using System.Net
 @using ApiContracts_DTO
 @using BlazorApp.Components.Services
 @inject IPostService PostService
+@inject IUserService UserService
 @inject NavigationManager Navigation
 @inject HttpClient Http
 
-<h3>PostList</h3>
+<h3>Post list</h3>
 
 @if (posts is null)
 {
@@ -24,7 +25,6 @@ else
             <th>Title</th>
             <th>Body</th>
             <th>Author</th>
-            <th>Comments</th>
         </tr>
         </thead>
         <tbody>
@@ -34,7 +34,7 @@ else
             <tr style="cursor:pointer" @onclick="@(() => GoToPost(p.Id))">
                 <td> @p.Title</td>
                 <td> @p.Body</td>
-                <td> @(author?.UserName ?? "Unkown")</td>
+                <td> @(author?.UserName)</td>
             </tr>
         }
         </tbody>
@@ -49,14 +49,18 @@ else
     {
         try
         {
-            posts = await Http.GetFromJsonAsync<List<PostDto>>("posts");
-            users = await Http.GetFromJsonAsync<List<UserDto>>("users");
+            var postResult  = await PostService.GetMany();
+            posts = postResult.ToList() ?? new List<PostDto>();
+            //posts = await Http.GetFromJsonAsync<List<PostDto>>("posts");
+
+            var userResult = await UserService.GetMany();
+            users = userResult.ToList() ?? new List<UserDto>();
+            //users = await Http.GetFromJsonAsync<List<UserDto>>("users");
         }
         catch (Exception ex)
         {
             posts = new List<PostDto>();
             users = new List<UserDto>();
-            Console.Error.WriteLine(ex.Message);
         }
     }
 

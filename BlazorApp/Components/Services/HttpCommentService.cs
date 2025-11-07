@@ -65,7 +65,7 @@ public class HttpCommentService : ICommentService
         }
     }
 
-    public async Task<IEnumerable<CommentDto>> GetSingleAsync(int postId)
+    public async Task<IQueryable> GetSingleAsync(int postId)
     {
         var comments = await client.GetFromJsonAsync<List<CommentDto>>(
             $"comments?postId={postId}",
@@ -76,11 +76,28 @@ public class HttpCommentService : ICommentService
             throw new Exception("API returned an empty response body for GetSingle (comments by post).");
         }
 
-        return comments;
+        return comments.AsQueryable();
     }
 
-    public Task<IEnumerable<CommentDto>> GetMany()
+    public async Task<IQueryable<CommentDto>> GetMany()
     {
-        throw new NotImplementedException();
+        HttpResponseMessage httpResponse =
+            await client.GetAsync($"comments");
+        
+        var comments = await httpResponse.Content.ReadFromJsonAsync<List<CommentDto>>(
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        //List<CommentDto> comments = JsonSerializer.Deserialize<List<CommentDto>>(response)!;
+
+        if (comments is null)
+        {
+            throw new Exception(
+                "API returned an empty response body for GetSingle.");
+        }
+
+        return comments.AsQueryable();
+
     }
 }

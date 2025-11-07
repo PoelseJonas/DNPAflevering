@@ -4,9 +4,9 @@ using System.Text.Json;
 
 namespace FileRepositories;
 
-public class UserFileRepository: IUserRepository
+public class UserFileRepository : IUserRepository
 {
-    private readonly string filePath = "comments.json";
+    private readonly string filePath = "users.json";
 
     public UserFileRepository()
     {

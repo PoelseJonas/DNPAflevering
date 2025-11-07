@@ -93,11 +93,8 @@ public class HttpUserService : IUserService
 
     public async Task<IQueryable<UserDto>> GetMany()
     {
-       /* HttpResponseMessage httpResponse = await client.GetFromJsonAsync<List<UserDto>>("users",  new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-        
+        HttpResponseMessage httpResponse =
+            await client.GetAsync($"users");
         string response = await httpResponse.Content.ReadAsStringAsync();
 
         if (!httpResponse.IsSuccessStatusCode)
@@ -105,11 +102,20 @@ public class HttpUserService : IUserService
             throw new Exception(response);
         }
 
-        return */
+        var users = await httpResponse.Content.ReadFromJsonAsync<List<UserDto>>(
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
 
-       return null;
+        if (users is null)
+        {
+            throw new Exception(
+                "API returned an empty response body for GetSingle.");
+        }
+
+        return users.AsQueryable();
+
     }
 
-
-    // more methods...
 }

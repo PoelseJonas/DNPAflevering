@@ -28,9 +28,26 @@ public class CommentFileRepository: ICommentRepository
         return comment;
     }
 
-    public Task<Comment> UpdateAsync(Comment comment)
+    public async Task<Comment> UpdateAsync(Comment comment)
     {
-        throw new NotImplementedException();
+        string commentsAsJson = await File.ReadAllTextAsync(filePath);
+        List<Comment> comments = JsonSerializer.Deserialize<List<Comment>>(commentsAsJson)!;
+
+        Comment? existingComment = comments.FirstOrDefault(u => u.Id == comment.Id);
+        if (existingComment == null)
+        {
+            throw new KeyNotFoundException($"Comment with ID '{comment.Id}' not found.");
+        }
+        
+        // Update the properties of the existing user
+        existingComment.Body = comment.Body;
+        // andre ting der skal ændres
+
+        // Write the updated list back to the file
+        commentsAsJson = JsonSerializer.Serialize(comments);
+        await File.WriteAllTextAsync(filePath, commentsAsJson);
+
+        return existingComment;
     }
 
     public Task DeleteAsync(int id)

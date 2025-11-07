@@ -67,11 +67,7 @@ public class PostsController:ControllerBase
                     Title = cachedPost.Title
                 };
                 //Tiden er ikke udløbet, så den er stadig "cached"
-                return Ok(new
-                {
-                    cached = true,
-                    post = dtoCached,
-                });
+                return Ok(dtoCached);
             }
         }
         //Hvis posten ikke er cached eller tiden er løbet ud:
@@ -92,11 +88,7 @@ public class PostsController:ControllerBase
             Body = post.Body
         };
         
-        return Ok(new
-        {
-            cached = false,
-            post = dto
-        });
+        return Ok(dto);
     }
     
     // PUT/Update endpoint to update an existing post
