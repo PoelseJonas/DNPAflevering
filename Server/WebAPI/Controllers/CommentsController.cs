@@ -43,42 +43,10 @@ public class CommentsController : ControllerBase
     }
 
 
-    //Cacheable
-    private static Dictionary<int, (Comment comment, DateTime timeStamp)>
-        commentCache =
-            new Dictionary<int, (Comment comment, DateTime timeStamp)>();
-
-    //Hvor lang tid den skal caches: (60 sekunder)
-    private static readonly TimeSpan cacheDuration = TimeSpan.FromSeconds(60);
-
     //Get kommentar
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetCommentById(int id)
     {
-        if (commentCache.TryGetValue(id, out var cached))
-        {
-            var (cachedComment, cacheTime) = commentCache[id];
-
-            //Her tjekker man om tiden er udløbet eller ej
-            if (DateTime.Now - cacheTime < cacheDuration)
-            {
-                var dtoCached = new CommentDto
-                {
-                    Body = cachedComment.Body,
-                    UserId = cachedComment.UserId,
-                    PostId = cachedComment.PostId,
-                    id = cachedComment.Id,
-                };
-                //Tiden er ikke udløbet, så den er stadig "cached"
-                return Ok(new
-                {
-                    cached = true,
-                    comment = cachedComment,
-                });
-            }
-        }
-        //Hvis brugeren ikke er cached eller tiden er løbet ud:
-
         var comment = await commentRepository.GetSingleAsync(id);
         if (id == -1)
         {
@@ -93,14 +61,7 @@ public class CommentsController : ControllerBase
             id = comment.Id,
         };
 
-        // Store the post in the cache with the current timestamp
-        commentCache[id] = (comment, DateTime.Now);
-
-        return Ok(new
-        {
-            cached = false,
-            comment = dto
-        });
+        return Ok(dto);
     }
 
     // PUT/Update endpoint to update an existing user
@@ -117,12 +78,7 @@ public class CommentsController : ControllerBase
 
         //update kommentaren:
         comment.Body = dto.Body;
-
         var updated = await commentRepository.UpdateAsync(comment);
-
-        //opdater cachen
-        commentCache[id] = (updated, DateTime.Now);
-
         
         return Ok(new CommentDto
         {
@@ -144,8 +100,6 @@ public class CommentsController : ControllerBase
         }
 
         await commentRepository.DeleteAsync(id);
-        commentCache.Remove(id);
-
         return NoContent();
     }
 

@@ -41,45 +41,16 @@ public class PostsController:ControllerBase
         
     }
 
-    //Cacheable
-    private static Dictionary<int, (Post post, DateTime timeStamp)> postCache =
-        new Dictionary<int, (Post post, DateTime timeStamp)>();
-
-    //Hvor lang tid den skal caches: (60 sekunder)
-    private static readonly TimeSpan cacheDuration = TimeSpan.FromSeconds(60);
-
-
+  
     //specifik post
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetPostById(int id)
     {
-        if (postCache.TryGetValue(id, out var cached))
-        {
-            var (cachedPost, cacheTime) = postCache[id];
-
-            //Her tjekker man om tiden er udløbet eller ej
-            if (DateTime.Now - cacheTime < cacheDuration)
-            {
-                var dtoCached = new PostDto
-                {
-                    Id = id,
-                    Body = cachedPost.Body,
-                    Title = cachedPost.Title
-                };
-                //Tiden er ikke udløbet, så den er stadig "cached"
-                return Ok(dtoCached);
-            }
-        }
-        //Hvis posten ikke er cached eller tiden er løbet ud:
-
-        var post = await postRepository.GetSingleAsync(id);
+      var post = await postRepository.GetSingleAsync(id);
         if (post is null)
         {
             return NotFound("Post not found");
         }
-
-        // Store the post in the cache with the current timestamp
-        postCache[id] = (post, DateTime.Now);
 
         var dto = new PostDto
         {
@@ -106,8 +77,7 @@ public class PostsController:ControllerBase
 
         
         var updated = await postRepository.UpdateAsync(post);
-        postCache[id] = (updated, DateTime.Now);
-
+        
         return Ok(new PostDto
         {
             Id = updated.Id,
@@ -127,7 +97,6 @@ public class PostsController:ControllerBase
         }
 
         await postRepository.DeleteAsync(id);
-        postCache.Remove(id);
         return NoContent();
     }
     

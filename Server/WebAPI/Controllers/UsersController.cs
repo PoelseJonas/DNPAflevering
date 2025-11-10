@@ -51,40 +51,12 @@ public class UsersController: ControllerBase
         }
     }
     
-    //Cacheable
-    private static Dictionary<string, (User user, DateTime timeStamp)> userCache =
-        new Dictionary<string, (User user, DateTime timeStamp)>();
-
-    //Hvor lang tid den skal caches: (60 sekunder)
-    private static readonly TimeSpan cacheDuration = TimeSpan.FromSeconds(60);
-    
+   
     //Get bruger
     [HttpGet("{username}")]
     public async Task<IActionResult> GetUserByName(string username)
     {
-        if (userCache.ContainsKey(username))
-        {
-            var (cachedUser, cacheTime) = userCache[username];
-
-            //Her tjekker man om tiden er udløbet eller ej
-            if (DateTime.Now - cacheTime < cacheDuration)
-            {
-                var dtoCached = new UserDto
-                {
-                    Id = cachedUser.Id,
-                    UserName = cachedUser.Username,
-                };
-                //Tiden er ikke udløbet, så den er stadig "cached"
-                return Ok(new
-                {
-                    cached = true,
-                    user = dtoCached,
-                });
-            }
-        }
-        //Hvis brugeren ikke er cached eller tiden er løbet ud:
-
-        var user = await userRepository.GetSingleAsync(username);
+       var user = await userRepository.GetSingleAsync(username);
         if (user is null)
         {
             return NotFound("User not found");
@@ -96,14 +68,7 @@ public class UsersController: ControllerBase
             UserName = user.Username
         };
 
-        // Store the post in the cache with the current timestamp
-        userCache[username] = (user, DateTime.Now);
-
-        return Ok(new
-        {
-            cached = false,
-            user = dto
-        });
+        return Ok(dto);
     }
     
     // PUT/Update endpoint to update an existing user
@@ -121,10 +86,6 @@ public class UsersController: ControllerBase
        user.Password = dto.Password;
 
        var updated = await userRepository.UpdateAsync(user);
-       
-       //opdater cachen
-       userCache[username] = (updated, DateTime.Now);
-
        return Ok(new UserDto
        {
            Id = updated.Id,
@@ -143,7 +104,6 @@ public class UsersController: ControllerBase
         }
 
         await userRepository.DeleteAsync(username);
-        userCache.Remove(username);
         
         return NoContent();
     }
