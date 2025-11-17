@@ -3,7 +3,7 @@ using System.Text.Json;
 using ApiContracts_DTO;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
-using System.Net.Http.Json;
+using ApiContracts_DTO;
 using Microsoft.JSInterop;
 
 namespace BlazorApp.Auth;
@@ -64,7 +64,7 @@ public class SimpleAuthProvider : AuthenticationStateProvider
     {
         HttpResponseMessage response = await httpClient.PostAsJsonAsync(
             "auth/login",
-            new LoginRequest { Email = userName, Password = password });
+            new LoginRequestDto() {Username = userName, Password = password });
 
         string content = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)

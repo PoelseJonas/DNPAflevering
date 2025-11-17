@@ -44,14 +44,16 @@ else
 @code {
     private List<PostDto>? posts;
     private List<UserDto>? users;
+
 //Man laver en protected override async task, for at undgå at blokere UI tråden
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            var postResult  = await PostService.GetMany();
+            var postResult = await PostService.GetMany();
             posts = postResult.ToList() ?? new List<PostDto>();
             //posts = await Http.GetFromJsonAsync<List<PostDto>>("posts");
+   
 
             var userResult = await UserService.GetMany();
             users = userResult.ToList() ?? new List<UserDto>();
