@@ -13,4 +13,6 @@ public class Comment
         this.UserId = userId;
         this.PostId = postId;
     }
+    
+    private Comment(){}  // for EFC
 }

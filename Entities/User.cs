@@ -10,6 +10,6 @@ public class User
     {
         this.Username = username;
         this.Password = password;
-        
     }
+    private User(){}  // for EFC
 }

@@ -1,43 +1,62 @@
 ﻿@page "/CreatePost"
+@using System.Security.Claims
 @using ApiContracts_DTO
 @using BlazorApp.Components.Services
 @inject IPostService PostService
-<h3>CreatePost</h3>
+@inject NavigationManager NavMgr
+<AuthorizeView>
+    <Authorized>
+        <h3>Hello, @context.User.Identity.Name</h3>
+        <p>Here you can create a post: </p>
+        
+        <div>
+            <label>Title:</label>
+            <input type="text" @bind="Title"/>
+        </div>
 
-<div>
-    <label>UserId:</label>
-    <input type="number" @bind="UserId"/>
-</div>
+        <div>
+            <label>Body:</label>
+            <textarea type="text" @bind="Body"></textarea>
+        </div>
 
-
-<div>
-    <label>Title:</label>
-    <input type="text" @bind="Title"/>
-</div>
-
-<div>
-    <label>Body:</label>
-    <textarea type="text" @bind="Body"></textarea>
-</div>
-
-<button @onclick="AddAPost">Add Post</button>
+        <button @onclick="AddAPost">Add Post</button>
+    </Authorized>
+    <NotAuthorized>
+        <p>lol you monkey are not logged in!</p>
+        <button @onclick='() => NavMgr.NavigateTo("login")'>go to login</button>
+    </NotAuthorized>
+</AuthorizeView>
 
 
 @code {
     private string Title { get; set; }
     private string Body { get; set; }
-    int UserId { get; set; }
+    //int UserId { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
+
 
     private void AddAPost()
     {
+        var authState = AuthenticationStateTask.Result;
+        var user = authState.User;
+        
+        // Try common claim types for user id
+        var idValue = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
+                      ?? user.FindFirst("sub")?.Value;
+        
+        
+
+        int.TryParse(idValue, out int userId);
+        
         CreatePostDto createPostDto = new CreatePostDto
         {
             Title = Title,
             Body = Body,
-            UserId = UserId
-            
+            UserId = userId
         };
         PostService.AddPostAsync(createPostDto);
+        NavMgr.NavigateTo("Posts");
     }
     
 }

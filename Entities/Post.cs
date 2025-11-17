@@ -14,4 +14,5 @@ public class Post
         this.Body = body;
         this.UserId = userId;
     }
+    private Post(){}  // for EFC
 }
