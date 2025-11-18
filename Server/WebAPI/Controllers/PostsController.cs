@@ -28,7 +28,8 @@ public class PostsController:ControllerBase
             {
                 Id = created.Id,
                 Body = created.Body,
-                Title = created.Title
+                Title = created.Title,
+                UserId = created.UserId
             };
             Console.WriteLine("mvi er nu i webapi" + dto);
             return Created($"/Posts/{dto.Id}", dto); ;
@@ -56,7 +57,8 @@ public class PostsController:ControllerBase
         {
             Id = post.Id,
             Title = post.Title,
-            Body = post.Body
+            Body = post.Body,
+            UserId = post.UserId
         };
         
         return Ok(dto);
@@ -118,7 +120,8 @@ public class PostsController:ControllerBase
         {
             Id = p.Id,
             Title = p.Title,
-            Body = p.Body
+            Body = p.Body,
+            UserId = p.UserId
         });
 
         return Ok(postDtos);

@@ -30,7 +30,7 @@ else
         <tbody>
         @foreach (var p in posts)
         {
-            var author = users.FirstOrDefault(u => u.Id == p.Id);
+            var author = users.FirstOrDefault(u => u.Id == p.UserId);
             <tr style="cursor:pointer" @onclick="@(() => GoToPost(p.Id))">
                 <td> @p.Title</td>
                 <td> @p.Body</td>
