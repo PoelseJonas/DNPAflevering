@@ -1,3 +1,4 @@
+using EfcRepositories;
 using RepositoryContracts;
 using FileRepositories;
 
@@ -10,9 +11,10 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container. Hvis der er andre som LikeRepository, skal de også på her.
-        builder.Services.AddScoped<IPostRepository, PostFileRepository>();
-        builder.Services.AddScoped<IUserRepository, UserFileRepository>();
-        builder.Services.AddScoped<ICommentRepository, CommentFileRepository>();
+        builder.Services.AddScoped<IPostRepository, EfcPostRepository>();
+        builder.Services.AddScoped<IUserRepository, EfcUserRepository>();
+        builder.Services.AddScoped<ICommentRepository, EfcCommentRepository>();
+        builder.Services.AddDbContext<AppContext>();
         
         
         builder.Services.AddControllers();
